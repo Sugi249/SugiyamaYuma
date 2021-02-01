@@ -6,40 +6,40 @@ using UniRx;
 
 public class MVRPInput : MonoBehaviour
 {
-    [SerializeField]
-    private Button UpButton;
-    [SerializeField]
-    private Button DownButton;
-    [SerializeField]
-    private Button LeftButton;
-    [SerializeField]
-    private Button RightButton;
+	[SerializeField]
+	private Button GameStartButton;
 
-    private MVRPModel Model;
+	[SerializeField]
+	private Button ActionButton;
 
-    public void InjectModel(MVRPModel model)
-    {
-        Model = model;
-    }
+	private MVRPModel Model;
 
-    void Start()
-    {
-        UpButton.OnClickAsObservable()
-            .Subscribe(_ =>
-            {
-                Vector3 position = Model.CubePosition.Value;
-                position.z += 3f;
-                Model.CubePosition.Value = position;
-            });
-        DownButton.OnClickAsObservable()
-            .Subscribe(_ =>
-            {
-                Vector3 position = Model.CubePosition.Value;
-                position.z -= 3f;
-                Model.CubePosition.Value = position;
-            });
+	public void InjectModel(MVRPModel model)
+	{
+		Model = model;
+	}
 
+	void Start()
+	{
+		GameStartButton.OnClickAsObservable()
+			.Subscribe(_ => Model.GameState.Value = GameStates.Playing);
 
+		ActionButton.OnClickAsObservable()
+			.Subscribe(_ => Jump());
+	}
 
-    }
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			Jump();
+		}
+	}
+
+	private void Jump()
+	{
+		Vector3 velocity = Model.CubeVelocity.Value;
+		velocity.y = 7f;
+		Model.CubeVelocity.Value = velocity;
+	}
 }
